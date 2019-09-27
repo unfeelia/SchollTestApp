@@ -20,6 +20,7 @@ namespace WebApp
         {
             services.AddSingleton<IAccountDatabase, AccountDatabaseStub>();
             services.AddSingleton<IAccountCache, AccountCache>();
+            services.AddSingleton<IAccountService, AccountService>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => 
@@ -50,6 +51,7 @@ namespace WebApp
             app.UseAuthentication();
 
             app.UseMvc();
+
             app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }
     }
