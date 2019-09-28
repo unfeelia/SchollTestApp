@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -26,13 +27,19 @@ namespace WebApp
                 .AddCookie(options => 
                 {
                     options.LoginPath = PathString.Empty;
+
+                    var oldEventHandler = (Func<Microsoft.AspNetCore.Authentication.RedirectContext<CookieAuthenticationOptions>, Task>)options.Events.OnRedirectToLogin.Clone();
+
                     options.Events.OnRedirectToLogin = context =>
                     {
                         if (context.Request.Path.StartsWithSegments("/api"))
                         {
                             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                         }
-
+                        else
+                        {
+                            oldEventHandler(context);
+                        }
                         return Task.CompletedTask;
                     };
                 });
